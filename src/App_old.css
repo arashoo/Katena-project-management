@@ -1,0 +1,758 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 8px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 20px;
+  margin: 20px;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.close-btn:hover {
+  background-color: #f0f0f0;
+}
+
+/* Main Navigation Styles */
+nav {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+nav button {
+  padding: 12px 24px;
+  background: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+nav button:hover {
+  background: #1565c0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+nav button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* Project Detail Styles */
+.project-steps {
+  margin-top: 20px;
+}
+
+.step-row {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  background: white;
+}
+
+.step-row.completed {
+  background: #f0f8f0;
+  border-color: #4caf50;
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.step-header:hover {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%);
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+  transform: translateY(-2px);
+}
+
+.step-header:hover::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform: rotate(45deg);
+  animation: shine 0.6s ease-out;
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+.step-header input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.step-name {
+  flex: 1;
+  text-align: left;
+  font-weight: 500;
+}
+
+.step-content {
+  padding: 0 15px 15px 15px;
+  border-top: 1px solid #eee;
+  background: #fafafa;
+}
+
+.file-upload-options {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  padding-top: 10px;
+}
+
+.file-upload-btn, .onedrive-upload-btn {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.file-upload-btn:hover, .onedrive-upload-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.step-files {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.file-item a {
+  color: #1976d2;
+  text-decoration: none;
+  flex: 1;
+}
+
+.file-item a:hover {
+  text-decoration: underline;
+}
+
+.delete-file-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.delete-file-btn:hover {
+  background-color: #ffebee;
+}
+
+.back-btn {
+  padding: 10px 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background-color 0.2s;
+}
+
+.back-btn:hover {
+  background-color: #f0f0f0;
+}
+
+/* Requirements Step Styles */
+.requirements-container {
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.requirements-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.add-requirement-btn {
+  padding: 10px 16px;
+  background: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.add-requirement-btn:hover {
+  background: #1565c0;
+}
+
+.requirement-form {
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.requirement-form form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  align-items: end;
+}
+
+.requirement-form input,
+.requirement-form select,
+.requirement-form textarea {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.requirement-form .form-actions {
+  display: flex;
+  gap: 10px;
+  grid-column: 1 / -1;
+}
+
+.requirement-form button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.submit-btn {
+  background: #4caf50;
+  color: white;
+}
+
+.submit-btn:hover {
+  background: #45a049;
+}
+
+.cancel-btn {
+  background: #f44336;
+  color: white;
+}
+
+.cancel-btn:hover {
+  background: #da190b;
+}
+
+.requirements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Requirement item status styles */
+.requirement-item {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+}
+
+.requirement-item.req-available {
+  background: #f0f9ff;
+  border-color: #4ade80;
+}
+
+.requirement-item.req-insufficient {
+  background: #fff5f5;
+  border-color: #ef4444;
+}
+
+.requirement-item.req-backlog {
+  background: #fef3c7;
+  border-color: #f59e0b;
+}
+
+.requirement-item.req-pending {
+  background: #fef3c7;
+  border-color: #f59e0b;
+}
+
+.requirement-item.req-ordered {
+  background: #fefce8;
+  border-color: #eab308;
+}
+
+.requirement-item.req-delivered {
+  background: #f0fdf4;
+  border-color: #22c55e;
+}
+
+.requirement-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.requirement-main {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.requirement-category {
+  font-weight: 500;
+  color: #1976d2;
+}
+
+.requirement-details {
+  color: #333;
+}
+
+.requirement-quantity {
+  font-weight: 500;
+  color: #666;
+}
+
+.availability-status {
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.availability-status.sufficient {
+  background: #e8f5e8;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.availability-status.insufficient {
+  background: #fff3e0;
+  color: #f57c00;
+  border: 1px solid #ffcc02;
+}
+
+.status-good {
+  color: #2e7d32;
+}
+
+.status-short {
+  color: #f57c00;
+}
+
+.status-shortage {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.order-btn {
+  padding: 6px 12px;
+  background: #ff9800;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  align-self: flex-start;
+}
+
+.order-btn:hover {
+  background: #f57c00;
+}
+
+.backlog-added {
+  background: #4caf50 !important;
+  color: white;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.backlog-added:hover {
+  background: #4caf50 !important;
+}
+
+/* Additional order status button styles */
+.order-btn.pending-status {
+  background: #f59e0b !important;
+  color: white;
+}
+
+.order-btn.ordered-status {
+  background: #eab308 !important;
+  color: white;
+}
+
+.order-btn.delivered-status {
+  background: #22c55e !important;
+  color: white;
+}
+
+.requirement-notes {
+  background: #f8f9fa;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #666;
+}
+
+.delete-requirement-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.delete-requirement-btn:hover {
+  background-color: #ffebee;
+}
+
+.requirements-summary {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.summary-stats {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.summary-stats span {
+  font-weight: 500;
+  color: #333;
+}
+
+@media (max-width: 768px) {
+  .requirement-form form {
+    grid-template-columns: 1fr;
+  }
+  
+  .requirement-main {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .summary-stats {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* Orders Component Styles */
+.orders-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.orders-description {
+  color: #666;
+  font-style: italic;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.orders-tabs {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+  border-bottom: 2px solid #eee;
+}
+
+.tab-btn {
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  color: #666;
+}
+
+.tab-btn:hover {
+  color: #1976d2;
+  background: #f5f5f5;
+}
+
+.tab-btn.active {
+  color: #1976d2;
+  border-bottom-color: #1976d2;
+  background: #f8f9fa;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.empty-orders {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px dashed #ddd;
+}
+
+.order-item {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: box-shadow 0.2s;
+}
+
+.order-item:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.order-info h4 {
+  margin: 0 0 5px 0;
+  color: #333;
+  font-size: 18px;
+}
+
+.order-project {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.order-status {
+  font-weight: bold;
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.8);
+}
+
+.order-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.order-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+}
+
+.order-category {
+  font-weight: 500;
+  color: #1976d2;
+}
+
+.order-quantity {
+  font-weight: 500;
+  color: #666;
+}
+
+.order-dimensions {
+  color: #666;
+  font-size: 14px;
+}
+
+.order-date {
+  color: #999;
+  font-size: 13px;
+}
+
+.order-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.status-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.ordered-btn {
+  background: #2196f3;
+  color: white;
+}
+
+.ordered-btn:hover {
+  background: #1976d2;
+}
+
+.order-now-btn {
+  background: #9c27b0;
+  color: white;
+}
+
+.order-now-btn:hover {
+  background: #7b1fa2;
+}
+
+.delivered-btn {
+  background: #4caf50;
+  color: white;
+}
+
+.delivered-btn:hover {
+  background: #45a049;
+}
+
+.delete-order-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.delete-order-btn:hover {
+  background-color: #ffebee;
+}
