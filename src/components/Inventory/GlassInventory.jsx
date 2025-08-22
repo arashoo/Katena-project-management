@@ -1,20 +1,18 @@
 import { useState } from 'react'
 
-function GlassInventory({ items, onAddItem, onUpdateItem, onDeleteItem, onBack }) {
+function GlassInventory({ items, onAddItem, onUpdateItem, onDeleteItem, onBack, allProjects }) {
   const [showAddForm, setShowAddForm] = useState(false)
   const [editingItem, setEditingItem] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
-  const [sortBy, setSortBy] = useState('name')
+  const [sortBy, setSortBy] = useState('width')
   const [sortOrder, setSortOrder] = useState('asc')
   const [formData, setFormData] = useState({
-    name: '',
     width: '',
     height: '',
     type: '',
     color: '',
     quantity: '',
     supplier: '',
-    cost: '',
     notes: ''
   })
 
@@ -23,7 +21,7 @@ function GlassInventory({ items, onAddItem, onUpdateItem, onDeleteItem, onBack }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (formData.name.trim() && formData.width && formData.height && formData.quantity) {
+    if (formData.width && formData.height && formData.quantity) {
       const width = parseFloat(formData.width) || 0
       const height = parseFloat(formData.height) || 0
       const area = width > 0 && height > 0 ? (width * height / 144).toFixed(2) : '0.00'
@@ -42,21 +40,19 @@ function GlassInventory({ items, onAddItem, onUpdateItem, onDeleteItem, onBack }
       } else {
         onAddItem(itemData)
       }
-      setFormData({ name: '', width: '', height: '', type: '', color: '', quantity: '', supplier: '', cost: '', notes: '' })
+      setFormData({ width: '', height: '', type: '', color: '', quantity: '', supplier: '', notes: '' })
       setShowAddForm(false)
     }
   }
 
   const handleEdit = (item) => {
     setFormData({
-      name: item.name || '',
       width: item.width || '',
       height: item.height || '',
       type: item.type || '',
       color: item.color || '',
       quantity: item.quantity || '',
       supplier: item.supplier || '',
-      cost: item.cost || '',
       notes: item.notes || ''
     })
     setEditingItem(item)
@@ -64,7 +60,7 @@ function GlassInventory({ items, onAddItem, onUpdateItem, onDeleteItem, onBack }
   }
 
   const handleCancel = () => {
-    setFormData({ name: '', width: '', height: '', type: '', color: '', quantity: '', supplier: '', cost: '', notes: '' })
+    setFormData({ width: '', height: '', type: '', color: '', quantity: '', supplier: '', notes: '' })
     setEditingItem(null)
     setShowAddForm(false)
   }
@@ -73,7 +69,6 @@ function GlassInventory({ items, onAddItem, onUpdateItem, onDeleteItem, onBack }
     .filter(item => {
       const searchLower = searchTerm.toLowerCase()
       return (
-        (item.name && item.name.toLowerCase().includes(searchLower)) ||
         (item.width && item.width.toString().includes(searchLower)) ||
         (item.height && item.height.toString().includes(searchLower)) ||
         (item.type && item.type.toLowerCase().includes(searchLower)) ||
@@ -85,8 +80,8 @@ function GlassInventory({ items, onAddItem, onUpdateItem, onDeleteItem, onBack }
       let aVal = a[sortBy]
       let bVal = b[sortBy]
       
-      // Handle numeric sorting for width, height, quantity, cost
-      if (['width', 'height', 'quantity', 'cost'].includes(sortBy)) {
+      // Handle numeric sorting for width, height, quantity
+      if (['width', 'height', 'quantity'].includes(sortBy)) {
         aVal = parseFloat(aVal) || 0
         bVal = parseFloat(bVal) || 0
       } else {
@@ -103,6 +98,31 @@ function GlassInventory({ items, onAddItem, onUpdateItem, onDeleteItem, onBack }
 
   const getLowStockItems = () => {
     return items.filter(item => parseInt(item.quantity) < 5)
+  }
+
+  const getAllocatedProjects = (glassItem) => {
+    if (!allProjects) return []
+    
+    const allocations = []
+    
+    allProjects.forEach(project => {
+      const reqStep = project.steps.find(s => s.name === 'Requirements')
+      if (!reqStep || !reqStep.requirements) return
+      
+      reqStep.requirements.forEach(req => {
+        if (req.category === 'glass' && 
+            req.width === glassItem.width && 
+            req.height === glassItem.height &&
+            (!req.color || req.color === glassItem.color)) {
+          allocations.push({
+            projectName: project.name,
+            quantity: parseInt(req.quantity) || 0
+          })
+        }
+      })
+    })
+    
+    return allocations
   }
 
   return (
@@ -131,7 +151,7 @@ function GlassInventory({ items, onAddItem, onUpdateItem, onDeleteItem, onBack }
       <div className="search-sort-controls">
         <input
           type="text"
-          placeholder="Search by name, dimensions, type, color, supplier..."
+          placeholder="Search by dimensions, type, color, supplier..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="search-input"
@@ -141,13 +161,11 @@ function GlassInventory({ items, onAddItem, onUpdateItem, onDeleteItem, onBack }
           onChange={(e) => setSortBy(e.target.value)}
           className="sort-select"
         >
-          <option value="name">Sort by Name</option>
           <option value="width">Sort by Width</option>
           <option value="height">Sort by Height</option>
           <option value="type">Sort by Type</option>
           <option value="color">Sort by Color</option>
           <option value="quantity">Sort by Quantity</option>
-          <option value="cost">Sort by Cost</option>
         </select>
         <button 
           onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
@@ -162,17 +180,6 @@ function GlassInventory({ items, onAddItem, onUpdateItem, onDeleteItem, onBack }
           <h4>{editingItem ? 'Edit Glass Item' : 'Add New Glass Item'}</h4>
           <form onSubmit={handleSubmit}>
             <div className="form-row">
-              <div className="form-group">
-                <label className="form-label">Glass Name/Description *</label>
-                <input
-                  type="text"
-                  placeholder="Glass name/description"
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="form-input"
-                  required
-                />
-              </div>
               <div className="form-group">
                 <label className="form-label">Width (inches) *</label>
                 <input
@@ -248,17 +255,6 @@ function GlassInventory({ items, onAddItem, onUpdateItem, onDeleteItem, onBack }
                   className="form-input"
                 />
               </div>
-              <div className="form-group">
-                <label className="form-label">Cost per sq ft</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  placeholder="Cost"
-                  value={formData.cost}
-                  onChange={(e) => setFormData({...formData, cost: e.target.value})}
-                  className="form-input"
-                />
-              </div>
             </div>
             <div className="form-group">
               <label className="form-label">Notes</label>
@@ -294,52 +290,68 @@ function GlassInventory({ items, onAddItem, onUpdateItem, onDeleteItem, onBack }
         ) : (
           <div className="glass-inventory-table">
             <div className="glass-table-header">
-              <span>Name</span>
               <span>Dimensions</span>
               <span>Type</span>
               <span>Color</span>
               <span>Qty</span>
               <span>Area (sq ft)</span>
-              <span>Cost</span>
+              <span>Allocated Projects</span>
               <span>Supplier</span>
               <span>Actions</span>
             </div>
-            {filteredAndSortedItems.map(item => (
-              <div 
-                key={item.id} 
-                className={`glass-table-row ${parseInt(item.quantity) < 5 ? 'low-stock' : ''}`}
-              >
-                <span className="item-name">
-                  {item.name || 'Unnamed Glass'}
-                  {item.notes && <small className="item-notes">{item.notes}</small>}
-                </span>
-                <span className="dimensions">
-                  {item.dimensions || `${item.width || 0}" × ${item.height || 0}"`}
-                </span>
-                <span>{item.type || '-'}</span>
-                <span>{item.color || '-'}</span>
-                <span className="quantity">{item.quantity || 0}</span>
-                <span>{item.area || '0.00'} sq ft</span>
-                <span>{item.cost ? `$${item.cost}` : '-'}</span>
-                <span>{item.supplier || '-'}</span>
-                <span className="item-actions">
-                  <button 
-                    className="edit-btn"
-                    onClick={() => handleEdit(item)}
-                    title="Edit glass"
-                  >
-                    ✏️
-                  </button>
-                  <button 
-                    className="delete-btn"
-                    onClick={() => onDeleteItem(item.id)}
-                    title="Delete glass"
-                  >
-                    🗑️
-                  </button>
-                </span>
-              </div>
-            ))}
+            {filteredAndSortedItems.map(item => {
+              const allocatedProjects = getAllocatedProjects(item)
+              const totalAllocated = allocatedProjects.reduce((sum, alloc) => sum + alloc.quantity, 0)
+              
+              return (
+                <div 
+                  key={item.id} 
+                  className={`glass-table-row ${parseInt(item.quantity) < 5 ? 'low-stock' : ''}`}
+                >
+                  <span className="dimensions">
+                    {item.dimensions || `${item.width || 0}" × ${item.height || 0}"`}
+                    {item.notes && <small className="item-notes">{item.notes}</small>}
+                  </span>
+                  <span>{item.type || '-'}</span>
+                  <span>{item.color || '-'}</span>
+                  <span className="quantity">{item.quantity || 0}</span>
+                  <span>{item.area || '0.00'} sq ft</span>
+                  <span className="allocated-projects">
+                    {allocatedProjects.length > 0 ? (
+                      <div className="allocation-list">
+                        {allocatedProjects.map((alloc, index) => (
+                          <div key={`${item.id}-alloc-${index}`} className="allocation-item">
+                            <strong>{alloc.projectName}:</strong> {alloc.quantity}
+                          </div>
+                        ))}
+                        <div className="total-allocated">
+                          Total: {totalAllocated}
+                        </div>
+                      </div>
+                    ) : (
+                      <span className="no-allocation">Not allocated</span>
+                    )}
+                  </span>
+                  <span>{item.supplier || '-'}</span>
+                  <span className="item-actions">
+                    <button 
+                      className="edit-btn"
+                      onClick={() => handleEdit(item)}
+                      title="Edit glass"
+                    >
+                      ✏️
+                    </button>
+                    <button 
+                      className="delete-btn"
+                      onClick={() => onDeleteItem(item.id)}
+                      title="Delete glass"
+                    >
+                      🗑️
+                    </button>
+                  </span>
+                </div>
+              )
+            })}
           </div>
         )}
       </div>

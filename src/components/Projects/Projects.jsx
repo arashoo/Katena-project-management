@@ -2,7 +2,7 @@ import { useState } from 'react'
 import ProjectsList from './ProjectsList'
 import ProjectDetail from './ProjectDetail'
 
-function Projects({ projects, setProjects, inventory, onCreateOrder, orders }) {
+function Projects({ projects, setProjects, inventory, onCreateOrder, orders, onUpdateInventory }) {
   const [selectedProject, setSelectedProject] = useState(null)
   const [showAddProject, setShowAddProject] = useState(false)
   const [newProjectName, setNewProjectName] = useState('')
@@ -229,6 +229,7 @@ function Projects({ projects, setProjects, inventory, onCreateOrder, orders }) {
           allProjects={projects}
           onCreateOrder={onCreateOrder}
           orders={orders}
+          onUpdateInventory={onUpdateInventory}
         />
       )}
     </div>

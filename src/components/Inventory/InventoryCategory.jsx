@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-function InventoryCategory({ category, items, onBack, onAddItem, onUpdateItem, onDeleteItem }) {
+function InventoryCategory({ category, items, onBack, onAddItem, onUpdateItem, onDeleteItem, allProjects }) {
   const [showAddForm, setShowAddForm] = useState(false)
   const [editingItem, setEditingItem] = useState(null)
   const [formData, setFormData] = useState({
@@ -8,7 +8,6 @@ function InventoryCategory({ category, items, onBack, onAddItem, onUpdateItem, o
     quantity: '',
     unit: '',
     supplier: '',
-    cost: '',
     notes: ''
   })
 
@@ -21,7 +20,7 @@ function InventoryCategory({ category, items, onBack, onAddItem, onUpdateItem, o
       } else {
         onAddItem(formData)
       }
-      setFormData({ name: '', quantity: '', unit: '', supplier: '', cost: '', notes: '' })
+      setFormData({ name: '', quantity: '', unit: '', supplier: '', notes: '' })
       setShowAddForm(false)
     }
   }
@@ -32,7 +31,6 @@ function InventoryCategory({ category, items, onBack, onAddItem, onUpdateItem, o
       quantity: item.quantity,
       unit: item.unit || '',
       supplier: item.supplier || '',
-      cost: item.cost || '',
       notes: item.notes || ''
     })
     setEditingItem(item)
@@ -40,13 +38,37 @@ function InventoryCategory({ category, items, onBack, onAddItem, onUpdateItem, o
   }
 
   const handleCancel = () => {
-    setFormData({ name: '', quantity: '', unit: '', supplier: '', cost: '', notes: '' })
+    setFormData({ name: '', quantity: '', unit: '', supplier: '', notes: '' })
     setEditingItem(null)
     setShowAddForm(false)
   }
 
   const getLowStockItems = () => {
     return items.filter(item => parseInt(item.quantity) < 10)
+  }
+
+  const getAllocatedProjects = (hardwareItem) => {
+    if (!allProjects) return []
+    
+    const allocations = []
+    
+    allProjects.forEach(project => {
+      const reqStep = project.steps.find(s => s.name === 'Requirements')
+      if (!reqStep || !reqStep.requirements) return
+      
+      reqStep.requirements.forEach(req => {
+        if (req.category === 'hardware' && 
+            req.itemType && hardwareItem.name &&
+            req.itemType.toLowerCase().includes(hardwareItem.name.toLowerCase())) {
+          allocations.push({
+            projectName: project.name,
+            quantity: parseInt(req.quantity) || 0
+          })
+        }
+      })
+    })
+    
+    return allocations
   }
 
   return (
@@ -104,13 +126,6 @@ function InventoryCategory({ category, items, onBack, onAddItem, onUpdateItem, o
                 value={formData.supplier}
                 onChange={(e) => setFormData({...formData, supplier: e.target.value})}
               />
-              <input
-                type="number"
-                step="0.01"
-                placeholder="Cost per unit"
-                value={formData.cost}
-                onChange={(e) => setFormData({...formData, cost: e.target.value})}
-              />
             </div>
             <textarea
               placeholder="Notes"
@@ -134,42 +149,62 @@ function InventoryCategory({ category, items, onBack, onAddItem, onUpdateItem, o
             <div className="table-header">
               <span>Name</span>
               <span>Quantity</span>
+              <span>Allocated Projects</span>
               <span>Supplier</span>
-              <span>Cost</span>
               <span>Actions</span>
             </div>
-            {items.map(item => (
-              <div 
-                key={item.id} 
-                className={`table-row ${parseInt(item.quantity) < 10 ? 'low-stock' : ''}`}
-              >
-                <span className="item-name">
-                  {item.name}
-                  {item.notes && <small className="item-notes">{item.notes}</small>}
-                </span>
-                <span className="item-quantity">
-                  {item.quantity} {item.unit}
-                </span>
-                <span>{item.supplier || '-'}</span>
-                <span>{item.cost ? `$${item.cost}` : '-'}</span>
-                <span className="item-actions">
-                  <button 
-                    className="edit-btn"
-                    onClick={() => handleEdit(item)}
-                    title="Edit item"
-                  >
-                    ✏️
-                  </button>
-                  <button 
-                    className="delete-btn"
-                    onClick={() => onDeleteItem(item.id)}
-                    title="Delete item"
-                  >
-                    🗑️
-                  </button>
-                </span>
-              </div>
-            ))}
+            {items.map(item => {
+              const allocatedProjects = getAllocatedProjects(item)
+              const totalAllocated = allocatedProjects.reduce((sum, alloc) => sum + alloc.quantity, 0)
+              
+              return (
+                <div 
+                  key={item.id} 
+                  className={`table-row ${parseInt(item.quantity) < 10 ? 'low-stock' : ''}`}
+                >
+                  <span className="item-name">
+                    {item.name}
+                    {item.notes && <small className="item-notes">{item.notes}</small>}
+                  </span>
+                  <span className="item-quantity">
+                    {item.quantity} {item.unit}
+                  </span>
+                  <span className="allocated-projects">
+                    {allocatedProjects.length > 0 ? (
+                      <div className="allocation-list">
+                        {allocatedProjects.map((alloc, index) => (
+                          <div key={`${item.id}-alloc-${index}`} className="allocation-item">
+                            <strong>{alloc.projectName}:</strong> {alloc.quantity}
+                          </div>
+                        ))}
+                        <div className="total-allocated">
+                          Total: {totalAllocated}
+                        </div>
+                      </div>
+                    ) : (
+                      <span className="no-allocation">Not allocated</span>
+                    )}
+                  </span>
+                  <span>{item.supplier || '-'}</span>
+                  <span className="item-actions">
+                    <button 
+                      className="edit-btn"
+                      onClick={() => handleEdit(item)}
+                      title="Edit item"
+                    >
+                      ✏️
+                    </button>
+                    <button 
+                      className="delete-btn"
+                      onClick={() => onDeleteItem(item.id)}
+                      title="Delete item"
+                    >
+                      🗑️
+                    </button>
+                  </span>
+                </div>
+              )
+            })}
           </div>
         )}
       </div>

@@ -106,7 +106,7 @@ function App() {
       </header>
 
       <Modal isOpen={activeModal === 'projects'} onClose={closeModal} title="📋 Project Management">
-        <Projects projects={projects} setProjects={setProjects} inventory={inventory} onCreateOrder={createOrder} orders={orders} />
+        <Projects projects={projects} setProjects={setProjects} inventory={inventory} onCreateOrder={createOrder} orders={orders} onUpdateInventory={setInventory} />
       </Modal>
 
       <Modal isOpen={activeModal === 'orders'} onClose={closeModal} title="📦 Orders Management">
@@ -122,7 +122,7 @@ function App() {
       </Modal>
 
       <Modal isOpen={activeModal === 'inventory'} onClose={closeModal} title="📊 Inventory Management">
-        <Inventory inventory={inventory} setInventory={setInventory} />
+        <Inventory inventory={inventory} setInventory={setInventory} allProjects={projects} />
       </Modal>
     </div>
   )

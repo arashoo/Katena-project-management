@@ -2,7 +2,7 @@ import { useState } from 'react'
 import InventoryCategory from './InventoryCategory'
 import GlassInventory from './GlassInventory'
 
-function Inventory({ inventory, setInventory }) {
+function Inventory({ inventory, setInventory, allProjects }) {
   const [selectedCategory, setSelectedCategory] = useState(null)
 
   const categories = [
@@ -71,6 +71,7 @@ function Inventory({ inventory, setInventory }) {
           onAddItem={(itemData) => addItem(selectedCategory.id, itemData)}
           onUpdateItem={(itemId, updatedData) => updateItem(selectedCategory.id, itemId, updatedData)}
           onDeleteItem={(itemId) => deleteItem(selectedCategory.id, itemId)}
+          allProjects={allProjects}
         />
       ) : (
         <InventoryCategory
@@ -80,6 +81,7 @@ function Inventory({ inventory, setInventory }) {
           onAddItem={(itemData) => addItem(selectedCategory.id, itemData)}
           onUpdateItem={(itemId, updatedData) => updateItem(selectedCategory.id, itemId, updatedData)}
           onDeleteItem={(itemId) => deleteItem(selectedCategory.id, itemId)}
+          allProjects={allProjects}
         />
       )}
     </div>

@@ -4,34 +4,82 @@ function Orders({ orders, setOrders, inventory, setInventory }) {
   const [activeTab, setActiveTab] = useState('backlog')
 
   const addToInventory = (orderItem) => {
-    // Create inventory item from order
-    const inventoryItem = {
-      id: Date.now(),
-      category: orderItem.category,
-      dateAdded: new Date().toLocaleDateString(),
-      quantity: parseInt(orderItem.quantity),
-      name: orderItem.itemName || `${orderItem.category} Item`,
-      // Glass specific properties
-      ...(orderItem.category === 'glass' && {
-        width: orderItem.width,
-        height: orderItem.height,
-        dimensions: `${orderItem.width}" × ${orderItem.height}"`,
-        color: orderItem.color || '',
-        type: orderItem.type || '',
-        area: orderItem.width && orderItem.height 
-          ? (parseFloat(orderItem.width) * parseFloat(orderItem.height) / 144).toFixed(2) 
-          : '0.00'
-      }),
-      // Hardware specific properties
-      ...(orderItem.category === 'hardware' && {
-        itemType: orderItem.itemType || 'Hardware Item'
-      })
-    }
+    setInventory(prev => {
+      const categoryInventory = prev[orderItem.category] || []
+      
+      if (orderItem.category === 'glass') {
+        // Check if glass with same dimensions, type, and color exists
+        const existingGlassIndex = categoryInventory.findIndex(item => 
+          item.width === orderItem.width &&
+          item.height === orderItem.height &&
+          item.type === (orderItem.type || '') &&
+          item.color === (orderItem.color || '')
+        )
+        
+        if (existingGlassIndex !== -1) {
+          // Add to existing glass quantity
+          const updatedInventory = [...categoryInventory]
+          updatedInventory[existingGlassIndex] = {
+            ...updatedInventory[existingGlassIndex],
+            quantity: (parseInt(updatedInventory[existingGlassIndex].quantity) + parseInt(orderItem.quantity)).toString()
+          }
+          
+          return {
+            ...prev,
+            [orderItem.category]: updatedInventory
+          }
+        }
+      } else if (orderItem.category === 'hardware') {
+        // Check if hardware with same type exists
+        const existingHardwareIndex = categoryInventory.findIndex(item =>
+          item.itemType === (orderItem.itemType || 'Hardware Item')
+        )
+        
+        if (existingHardwareIndex !== -1) {
+          // Add to existing hardware quantity
+          const updatedInventory = [...categoryInventory]
+          updatedInventory[existingHardwareIndex] = {
+            ...updatedInventory[existingHardwareIndex],
+            quantity: (parseInt(updatedInventory[existingHardwareIndex].quantity) + parseInt(orderItem.quantity)).toString()
+          }
+          
+          return {
+            ...prev,
+            [orderItem.category]: updatedInventory
+          }
+        }
+      }
+      
+      // Create new inventory item if no match found
+      const inventoryItem = {
+        id: Date.now(),
+        category: orderItem.category,
+        dateAdded: new Date().toLocaleDateString(),
+        quantity: parseInt(orderItem.quantity),
+        // Glass specific properties
+        ...(orderItem.category === 'glass' && {
+          width: orderItem.width,
+          height: orderItem.height,
+          dimensions: `${orderItem.width}" × ${orderItem.height}"`,
+          color: orderItem.color || '',
+          type: orderItem.type || '',
+          supplier: orderItem.supplier || '',
+          area: orderItem.width && orderItem.height 
+            ? (parseFloat(orderItem.width) * parseFloat(orderItem.height) / 144).toFixed(2) 
+            : '0.00'
+        }),
+        // Hardware specific properties
+        ...(orderItem.category === 'hardware' && {
+          itemType: orderItem.itemType || 'Hardware Item',
+          supplier: orderItem.supplier || ''
+        })
+      }
 
-    setInventory(prev => ({
-      ...prev,
-      [orderItem.category]: [...(prev[orderItem.category] || []), inventoryItem]
-    }))
+      return {
+        ...prev,
+        [orderItem.category]: [...categoryInventory, inventoryItem]
+      }
+    })
   }
 
   const categorizeOrders = () => {

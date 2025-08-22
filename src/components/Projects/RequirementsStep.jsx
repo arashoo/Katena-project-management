@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-function RequirementsStep({ project, stepId, inventory, onUpdateRequirements, allProjects, onCreateOrder, orders }) {
+function RequirementsStep({ project, stepId, inventory, onUpdateRequirements, allProjects, onCreateOrder, orders, onUpdateInventory }) {
   const [showAddForm, setShowAddForm] = useState(false)
   const [formData, setFormData] = useState({
     category: 'glass',
@@ -9,6 +9,7 @@ function RequirementsStep({ project, stepId, inventory, onUpdateRequirements, al
     height: '',
     color: '',
     quantity: '',
+    supplier: '',
     notes: ''
   })
 
@@ -17,10 +18,15 @@ function RequirementsStep({ project, stepId, inventory, onUpdateRequirements, al
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (formData.quantity && (formData.itemType || (formData.width && formData.height))) {
+    if (formData.quantity && formData.supplier && 
+        ((formData.category === 'glass' && formData.width && formData.height) || 
+         (formData.category === 'hardware' && formData.itemType))) {
       const newRequirement = {
         id: Date.now(),
         ...formData,
+        itemName: formData.category === 'glass' 
+          ? `${formData.width}" × ${formData.height}"${formData.color ? ` ${formData.color}` : ''} Glass`
+          : formData.itemType,
         dimensions: formData.width && formData.height ? `${formData.width}" × ${formData.height}"` : null,
         dateAdded: new Date().toLocaleDateString()
       }
@@ -35,6 +41,7 @@ function RequirementsStep({ project, stepId, inventory, onUpdateRequirements, al
         height: '',
         color: '',
         quantity: '',
+        supplier: '',
         notes: ''
       })
       setShowAddForm(false)
@@ -65,10 +72,13 @@ function RequirementsStep({ project, stepId, inventory, onUpdateRequirements, al
       orderData.height = requirement.height
       orderData.color = requirement.color || 'Clear'
       orderData.dimensions = requirement.dimensions
-      orderData.itemName = `${requirement.width}" × ${requirement.height}" Glass${requirement.color ? ` (${requirement.color})` : ''}`
+      orderData.itemName = `${requirement.width}" × ${requirement.height}"${requirement.color ? ` ${requirement.color}` : ''} Glass`
+      orderData.supplier = requirement.supplier
+      orderData.type = requirement.type || ''
     } else {
       orderData.itemType = requirement.itemType
       orderData.itemName = requirement.itemType
+      orderData.supplier = requirement.supplier
     }
 
     if (onCreateOrder) {
@@ -203,7 +213,9 @@ function RequirementsStep({ project, stepId, inventory, onUpdateRequirements, al
         available: Math.max(0, availableAfterAllocations),
         needed: needed,
         sufficient: availableAfterAllocations >= needed,
-        shortage: Math.max(0, needed - availableAfterAllocations)
+        shortage: Math.max(0, needed - availableAfterAllocations),
+        canAllocate: availableAfterAllocations > 0 && needed > 0,
+        inventoryItems: availableItems
       }
     } else if (requirement.category === 'hardware') {
       const hardwareInventory = inventory.hardware || []
@@ -226,7 +238,9 @@ function RequirementsStep({ project, stepId, inventory, onUpdateRequirements, al
         available: Math.max(0, availableAfterAllocations),
         needed: needed,
         sufficient: availableAfterAllocations >= needed,
-        shortage: Math.max(0, needed - availableAfterAllocations)
+        shortage: Math.max(0, needed - availableAfterAllocations),
+        canAllocate: availableAfterAllocations > 0 && needed > 0,
+        inventoryItems: availableItems
       }
     }
     
@@ -236,7 +250,59 @@ function RequirementsStep({ project, stepId, inventory, onUpdateRequirements, al
       available: 0,
       needed: parseInt(requirement.quantity), 
       sufficient: false, 
-      shortage: parseInt(requirement.quantity) 
+      shortage: parseInt(requirement.quantity),
+      canAllocate: false,
+      inventoryItems: []
+    }
+  }
+
+  const handleAllocateInventory = (requirement) => {
+    const availability = checkInventoryAvailability(requirement)
+    
+    if (!availability.canAllocate) {
+      alert('No inventory available to allocate')
+      return
+    }
+
+    const maxCanAllocate = Math.min(availability.available, availability.needed)
+    const quantityToAllocate = prompt(
+      `How many items would you like to allocate to "${project.name}"?\n\n` +
+      `Available: ${availability.available}\n` +
+      `Needed: ${availability.needed}\n` +
+      `Maximum you can allocate: ${maxCanAllocate}`,
+      maxCanAllocate.toString()
+    )
+
+    if (quantityToAllocate === null) return // User cancelled
+
+    const allocateQty = parseInt(quantityToAllocate)
+    if (isNaN(allocateQty) || allocateQty <= 0) {
+      alert('Please enter a valid quantity')
+      return
+    }
+
+    if (allocateQty > maxCanAllocate) {
+      alert(`You can only allocate up to ${maxCanAllocate} items`)
+      return
+    }
+
+    // Update inventory to reflect the allocation
+    if (onUpdateInventory && availability.inventoryItems.length > 0) {
+      // For now, we'll just add the allocation to the requirement
+      // The actual inventory update will be handled by the allocation tracking system
+      const updatedRequirement = {
+        ...requirement,
+        allocatedQuantity: allocateQty,
+        allocationDate: new Date().toLocaleDateString()
+      }
+
+      const updatedRequirements = requirements.map(req => 
+        req.id === requirement.id ? updatedRequirement : req
+      )
+      
+      onUpdateRequirements(project.id, stepId, updatedRequirements)
+      
+      alert(`Successfully allocated ${allocateQty} items to ${project.name}`)
     }
   }
 
@@ -294,15 +360,31 @@ function RequirementsStep({ project, stepId, inventory, onUpdateRequirements, al
                     <option key={color} value={color}>{color}</option>
                   ))}
                 </select>
+                <input
+                  type="text"
+                  placeholder="Glass supplier *"
+                  value={formData.supplier}
+                  onChange={(e) => setFormData({...formData, supplier: e.target.value})}
+                  required
+                />
               </>
             ) : (
-              <input
-                type="text"
-                placeholder="Hardware item name *"
-                value={formData.itemType}
-                onChange={(e) => setFormData({...formData, itemType: e.target.value})}
-                required
-              />
+              <>
+                <input
+                  type="text"
+                  placeholder="Hardware item name *"
+                  value={formData.itemType}
+                  onChange={(e) => setFormData({...formData, itemType: e.target.value})}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Hardware supplier *"
+                  value={formData.supplier}
+                  onChange={(e) => setFormData({...formData, supplier: e.target.value})}
+                  required
+                />
+              </>
             )}
             
             <input
@@ -355,12 +437,23 @@ function RequirementsStep({ project, stepId, inventory, onUpdateRequirements, al
                     <span className="requirement-category">
                       {requirement.category === 'glass' ? '🪟' : '🔧'} {requirement.category}
                     </span>
-                    <span className="requirement-details">
-                      {requirement.category === 'glass' 
-                        ? `${requirement.dimensions} ${requirement.color ? requirement.color : ''}`
-                        : requirement.itemType
-                      }
-                    </span>
+                    <div className="requirement-details">
+                      <div className="item-name">
+                        <strong>{requirement.category === 'glass' 
+                          ? `${requirement.dimensions}${requirement.color ? ` ${requirement.color}` : ''} Glass`
+                          : requirement.itemType}</strong>
+                      </div>
+                      {requirement.category === 'glass' && (
+                        <div className="item-specs">
+                          📐 {requirement.dimensions} {requirement.color && `• 🎨 ${requirement.color}`}
+                        </div>
+                      )}
+                      {requirement.supplier && (
+                        <div className="item-supplier">
+                          🏢 Supplier: {requirement.supplier}
+                        </div>
+                      )}
+                    </div>
                     <span className="requirement-quantity">
                       Qty: {requirement.quantity}
                     </span>
@@ -368,14 +461,44 @@ function RequirementsStep({ project, stepId, inventory, onUpdateRequirements, al
                   
                   <div className={`availability-status ${availability.sufficient ? 'sufficient' : 'insufficient'}`}>
                     {availability.sufficient ? (
-                      <span className="status-good">
-                        ✅ Available
-                      </span>
+                      <div className="status-good-container">
+                        <span className="status-good">
+                          ✅ Available
+                        </span>
+                        {requirement.allocatedQuantity && (
+                          <div className="allocation-info">
+                            🔒 Allocated: {requirement.allocatedQuantity} on {requirement.allocationDate}
+                          </div>
+                        )}
+                        {availability.canAllocate && !requirement.allocatedQuantity && (
+                          <button 
+                            className="allocate-btn"
+                            onClick={() => handleAllocateInventory(requirement)}
+                            title="Allocate inventory to this project"
+                          >
+                            🔒 Allocate to Project
+                          </button>
+                        )}
+                      </div>
                     ) : (
                       <div className="status-shortage">
                         <span className="status-short">
                           ⚠️ Need to order {availability.shortage} more
                         </span>
+                        {availability.canAllocate && (
+                          <button 
+                            className="allocate-btn"
+                            onClick={() => handleAllocateInventory(requirement)}
+                            title="Allocate available inventory to this project"
+                          >
+                            🔒 Allocate Available ({availability.available})
+                          </button>
+                        )}
+                        {requirement.allocatedQuantity && (
+                          <div className="allocation-info">
+                            🔒 Allocated: {requirement.allocatedQuantity} on {requirement.allocationDate}
+                          </div>
+                        )}
                         <button 
                           className={buttonConfig.className}
                           disabled={buttonConfig.disabled}
@@ -388,8 +511,8 @@ function RequirementsStep({ project, stepId, inventory, onUpdateRequirements, al
                     )}
                     <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
                       In Stock: {availability.inStock} | 
-                      Allocated: {availability.allocated} | 
-                      Available: {availability.available}
+                      Allocated: {availability.allocated + (requirement.allocatedQuantity || 0)} | 
+                      Available: {availability.available - (requirement.allocatedQuantity || 0)}
                     </div>
                   </div>
                   

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import RequirementsStep from './RequirementsStep'
 
-function ProjectDetail({ project, onBack, onToggleStep, onFileUpload, onDeleteFile, inventory, onUpdateRequirements, allProjects, onCreateOrder, orders }) {
+function ProjectDetail({ project, onBack, onToggleStep, onFileUpload, onDeleteFile, inventory, onUpdateRequirements, allProjects, onCreateOrder, orders, onUpdateInventory }) {
   const [expandedSteps, setExpandedSteps] = useState(new Set())
 
   const toggleStepExpansion = (stepId) => {
@@ -58,21 +58,30 @@ function ProjectDetail({ project, onBack, onToggleStep, onFileUpload, onDeleteFi
         {project.steps.map(step => {
           const isExpanded = expandedSteps.has(step.id)
           return (
-            <div key={step.id} className={`step-row ${step.completed ? 'completed' : ''}`}>
+            <div key={step.id} className={`step-card ${step.completed ? 'completed' : ''} ${isExpanded ? 'expanded' : ''}`}>
               <div className="step-header" onClick={() => toggleStepExpansion(step.id)}>
-                <input
-                  type="checkbox"
-                  checked={step.completed}
-                  onChange={(e) => {
-                    e.stopPropagation()
-                    onToggleStep(project.id, step.id)
-                  }}
-                />
-                <span className="step-name">{step.name}</span>
+                <div className="step-info">
+                  <div className="step-checkbox-container">
+                    <input
+                      type="checkbox"
+                      checked={step.completed}
+                      onChange={(e) => {
+                        e.stopPropagation()
+                        onToggleStep(project.id, step.id)
+                      }}
+                      className="step-checkbox"
+                    />
+                  </div>
+                  <span className="step-name">{step.name}</span>
+                  {step.completed && <span className="completion-badge">✓</span>}
+                </div>
+                <div className="step-expand-icon">
+                  <span className={`expand-arrow ${isExpanded ? 'rotated' : ''}`}>▼</span>
+                </div>
               </div>
               
-              {isExpanded && (
-                <div className="step-content">
+              <div className={`step-content ${isExpanded ? 'expanded' : 'collapsed'}`}>
+                <div className="step-content-inner">
                   {step.name !== 'Requirements' && (
                     <>
                       <div className="file-upload-options">
@@ -126,10 +135,11 @@ function ProjectDetail({ project, onBack, onToggleStep, onFileUpload, onDeleteFi
                       allProjects={allProjects}
                       onCreateOrder={onCreateOrder}
                       orders={orders}
+                      onUpdateInventory={onUpdateInventory}
                     />
                   )}
                 </div>
-              )}
+              </div>
             </div>
           )
         })}
