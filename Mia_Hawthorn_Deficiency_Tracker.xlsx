@@ -1,0 +1,25 @@
+Issue_ID,Date,Priority,Category,Unit_Location,French_Description,English_Translation,Status,Assigned_To,Due_Date,Notes
+DEF-001,2025-09-09,Medium,Missing Component,Unit 205,juliette balcony railing is on site in the unit,Juliette balcony railing is on site in the unit,In Progress,-,-,Railing delivered but needs installation
+DEF-002,2025-09-09,Low,Status Update,Unit 302,balcony railing complete,Balcony railing complete,Resolved,-,-,Completed unit
+DEF-003,2025-09-09,High,Missing Component,Unit 307,juliette balcony not on site,Juliette balcony not on site,New,-,-,Railing not delivered yet
+DEF-004,2025-09-09,Medium,Missing Component,Unit 311,standard balcony railing railing is on site in the unit,Standard balcony railing is on site in the unit,In Progress,-,-,Railing delivered but needs installation
+DEF-005,2025-09-16,Critical,Delivery Schedule,North Side Elevation,We would like to have all the railing delivered this Wednesday September 17th 2025,All railings needed for North side by Sept 17,Blocked,Sam/Arash,2025-09-17,Client urgent request - North side priority
+DEF-006,2025-09-16,High,Missing Documentation,First Floor,missing first floor drawing,Missing first floor drawing,New,Arash,-,Plans needed for installation
+DEF-007,2025-09-17,Medium,Missing Installation,Unit 908,On a besoin d'installer Les 2 morceaux de 115 champagne,Need to install 2 pieces of 115 champagne,New,Lado,-,Requires 24h notice for access
+DEF-008,2025-09-17,High,Missing Hardware,Unit 602/801,Unit 602/801 missing fasterners,Units 602/801 missing fasteners,New,-,-,Hardware deficiency
+DEF-009,2025-09-17,Medium,Hardware Issue,Unit 1203,Unti 1203 loose base screw,Unit 1203 loose base screw,New,-,-,Missing bolt on left side
+DEF-010,2025-09-18,High,Delivery Issue,General,Ne pas envoyer le grand camion on as pas de place juste petite,Don't send big truck no space only small one,Resolved,Bouchaib,-,Truck size constraint
+DEF-011,2025-09-18,Medium,Access Issue,6th Floor+,elevator serat en marche 1 octobre,Elevator will work October 1st,Blocked,-,2025-10-01,Access limited until elevator operational
+DEF-012,2025-09-18,High,Missing Components,Various,G 17 et g15 ne sont pas encor pret et les div 8 on peut pas monter,G17 and G15 not ready Div 8 can't be lifted,New,Production,-,Production delay
+DEF-013,2025-09-18,Medium,Wrong Quantity,G4 Components,Pourquoi just 2 fois?,Why only 2 times? Should be 3 times G4,New,Bouchaib,-,Quantity discrepancy
+DEF-014,2025-09-18,High,Site Access,4th Floor,on peut pas instaler 4 eme aussi car il attend la livreson,Can't install 4th floor waiting for delivery,Blocked,-,-,Site coordination issue
+DEF-015,2025-09-18,High,Organization Issue,Site Storage,Je n arrive meme pas a trouver mes railings ils ont tous déplacé,Can't find railings everything moved,New,Site Manager,-,Poor site organization
+DEF-016,2025-09-19,Medium,Wrong Hardware,G4 Components,pourquoi ils sont sur les court pieds et pas les longues?,Why short legs instead of long ones?,New,Production,-,Wrong leg length installed
+DEF-017,2025-09-19,Critical,Missing Components,Div 8,Div 8 - 32 pièces pas 46,Div 8 - 32 pieces not 46 missing 14 pieces,New,Bouchaib,-,14 pieces forgotten in loading
+DEF-018,2025-09-19,High,Missing Components,Future Delivery,14 x di8 26 x poste 3x3,Need 14x Div8 26x posts 3x3,New,Bouchaib,2025-09-23,For next delivery Monday
+DEF-019,2025-09-19,Medium,Missing Components,G9 Caps,Il me faut encor les caps de g9 x 4 just le front,Need G9 caps x4 front only no returns,New,Bouchaib,-,Caps for G9 installation
+DEF-020,2025-09-20,High,Missing Fabrication,Custom Piece,Il me manque ca fabriqué les mois max pour demain,Missing this fabricate maximum by tomorrow,New,Production,2025-09-21,Urgent fabrication needed
+DEF-021,2025-09-20,Medium,Missing Materials,Queen Project,mettre dans le camion encrage et chimie pour queen,Put anchoring and chemistry in truck for Queen,New,-,-,Materials for different project
+DEF-022,2025-09-20,Low,Wrong Specification,G13,G13 ne monvoyer pas les glasse de 5 feet please,G13 don't send 5 feet glass please,New,Production,-,Wrong glass size specification
+DEF-023,2025-09-21,High,Unknown Foundation,G13,G13 pas de concret je crois il y a juste le bois,G13 no concrete only wood,New,Site Engineer,-,Need to determine bolt length/type
+DEF-024,2025-09-21,High,Foundation Issue,G15/G17,G15 et g 17 je crois que il ya de bois et en pas cancrit,G15 and G17 have wood not concrete,New,Site Engineer,-,Need longer wedges and bolts if wood is thin
