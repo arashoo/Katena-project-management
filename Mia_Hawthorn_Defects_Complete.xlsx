@@ -1,0 +1,49 @@
+# Deficiency Tracking
+
+| Item No | Description | Status        | Priority | Notes |
+|---------|-------------|---------------|----------|-------|
+| 1       | Item 1     | NEW           | CRITICAL |       |
+| 2       | Item 2     | IN PROGRESS   | HIGH     |       |
+| 3       | Item 3     | BLOCKED       | MEDIUM   |       |
+| 4       | Item 4     | RESOLVED      | LOW      |       |
+| 5       | Item 5     | NEW           | CRITICAL |       |
+| 6       | Item 6     | IN PROGRESS   | HIGH     |       |
+| 7       | Item 7     | BLOCKED       | MEDIUM   |       |
+| 8       | Item 8     | RESOLVED      | LOW      |       |
+| 9       | Item 9     | NEW           | CRITICAL |       |
+| 10      | Item 10    | IN PROGRESS   | HIGH     |       |
+| 11      | Item 11    | BLOCKED       | MEDIUM   |       |
+| 12      | Item 12    | RESOLVED      | LOW      |       |
+| 13      | Item 13    | NEW           | CRITICAL |       |
+| 14      | Item 14    | IN PROGRESS   | HIGH     |       |
+| 15      | Item 15    | BLOCKED       | MEDIUM   |       |
+| 16      | Item 16    | RESOLVED      | LOW      |       |
+| 17      | Item 17    | NEW           | CRITICAL |       |
+| 18      | Item 18    | IN PROGRESS   | HIGH     |       |
+| 19      | Item 19    | BLOCKED       | MEDIUM   |       |
+| 20      | Item 20    | RESOLVED      | LOW      |       |
+| 21      | Item 21    | NEW           | CRITICAL |       |
+| 22      | Item 22    | IN PROGRESS   | HIGH     |       |
+| 23      | Item 23    | BLOCKED       | MEDIUM   |       |
+| 24      | Item 24    | RESOLVED      | LOW      |       |
+
+## Data Validation
+- **Status Options**: NEW, IN PROGRESS, BLOCKED, RESOLVED
+- **Priority Options**: CRITICAL, HIGH, MEDIUM, LOW
+
+## Conditional Formatting
+- **Priority Levels**:
+  - CRITICAL: Red
+  - HIGH: Orange
+  - MEDIUM: Yellow
+  - LOW: Green
+
+- **Status Colors**:
+  - BLOCKED: Dark Red
+  - NEW: Light Blue
+  - IN PROGRESS: Orange
+  - RESOLVED: Green
+
+## Features
+- Frozen Header Row
+- Auto-Filters Enabled
